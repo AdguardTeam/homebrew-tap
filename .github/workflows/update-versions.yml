@@ -29,6 +29,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          # Do not persist an Authorization header in git config. protected-push
+          # later adds its own (Octopass) Authorization header for the push, and
+          # with checkout's header still around, git sends two Authorization
+          # headers, which GitHub rejects with "Duplicate header: Authorization".
+          persist-credentials: false
 
       # Build the multi-stage image: the 'test' stage runs the unit tests and
       # the 'update' stage runs scripts/update-versions.js inside the
