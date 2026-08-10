@@ -16,6 +16,8 @@ project.
 
 ## Usage
 
+Install the tap and formulas:
+
 ```sh
 brew tap AdguardTeam/tap
 brew install adyg adguard-cli adguardvpn-cli
@@ -64,14 +66,6 @@ brew untap <owner>/tap
 
 The CI workflow (`.github/workflows/test.yml`) does the same thing on the
 self-hosted macOS runners and installs + tests all three formulas.
-
-## Mirroring
-
-The enterprise repo (`AdGuardSoftwareLimited/homebrew-tap`) is the source of
-truth. On every push to `master` (and on tags) it is mirrored to the public
-[`AdguardTeam/homebrew-tap`](https://github.com/AdguardTeam/homebrew-tap) by
-`.github/workflows/mirror.yml`, so `brew tap AdguardTeam/tap` works for users on
-github.com.
 
 ## Disclaimer
 

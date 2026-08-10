@@ -16,6 +16,11 @@ class AdguardCli < Formula
   REPO = "AdguardTeam/AdGuardCLI".freeze
 
   # Queries the GitHub releases API for the latest (non-prerelease) release.
+  #
+  # Validates the HTTP status and the payload shape so that failures (e.g. the
+  # unauthenticated API rate limit being exceeded on CI runners, which returns
+  # an error JSON without "tag_name") produce a useful error instead of a bare
+  # KeyError.
   def self.latest_release
     uri = URI("https://api.github.com/repos/#{REPO}/releases/latest")
     http = Net::HTTP.new(uri.host, uri.port)
@@ -26,7 +31,15 @@ class AdguardCli < Formula
     request["Accept"] = "application/vnd.github+json"
     request["User-Agent"] = "homebrew-tap"
     response = http.request(request)
-    JSON.parse(response.body)
+    unless response.is_a?(Net::HTTPSuccess)
+      odie "GitHub API for #{REPO} returned HTTP #{response.code}: #{response.body.to_s[0, 300]}"
+    end
+
+    release = JSON.parse(response.body)
+    %w[tag_name assets].each do |key|
+      odie "GitHub release payload for #{REPO} is missing '#{key}'" if release[key].nil?
+    end
+    release
   rescue => e
     odie "Unable to fetch the latest release of #{REPO}: #{e}"
   end
