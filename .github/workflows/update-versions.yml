@@ -52,6 +52,11 @@ jobs:
         id: protected-push
         uses: AdGuardSoftwareLimited/actions/actions/protected-push@master
         with:
+          # Required: protected-push forwards this to Octopass as the target
+          # repository for the minted token. Without it, Octopass gets an
+          # empty repository and rejects the request ("invalid token scope
+          # request").
+          repository: ${{ github.repository }}
           branch: master
           commit-message: "chore: bump homebrew formula versions"
           files: "Formula"
