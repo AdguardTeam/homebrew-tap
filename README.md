@@ -7,27 +7,49 @@ publish newer versions.
 
 ## What's in this tap
 
+This tap provides prebuilt binaries of the following AdGuard command-line tools.
+Each tool links to its upstream repository:
+
 | Formula | Tool | License | Pinned version |
 | --- | --- | --- | --- |
-| `adyg` | dig-like DNS query CLI built on the [`upstream` library] (part of `DnsLibs`) | Apache-2.0 | 2.10.1 |
-| `adguard-cli` | AdGuard command-line interface (ad-blocking) | proprietary | 1.4.13 |
-| `adguardvpn-cli` | AdGuard VPN command-line interface | proprietary | 1.7.12 |
+| `adyg` | [dig-like DNS query CLI][adyg-readme], built on the `upstream` library (part of `DnsLibs`) | Apache-2.0 | 2.10.1 |
+| `adguard-cli` | [AdGuard command-line interface][adguard-cli] (ad-blocking) | proprietary | 1.4.13 |
+| `adguardvpn-cli` | [AdGuard VPN command-line interface][adguardvpn-cli] | proprietary | 1.7.12 |
+| `adguarddns-cli` | [AdGuard DNS command-line interface][adguarddns-cli] | Apache-2.0 | 0.2.0 |
+| `adguardhome` | [Network-wide ads and trackers blocking DNS server][adguardhome] | GPL-3.0 | 0.107.78 |
+| `dnsproxy` | [Simple DNS proxy with DoH, DoT, DoQ and DNSCrypt support][dnsproxy] | Apache-2.0 | 0.83.2 |
+
+[adyg-readme]: https://github.com/AdguardTeam/DnsLibs/blob/master/docs/adyg.md
+[adguard-cli]: https://github.com/AdguardTeam/AdGuardCLI
+[adguardvpn-cli]: https://github.com/AdguardTeam/AdGuardVPNCLI
+[adguarddns-cli]: https://github.com/AdguardTeam/AdGuardDNSCLI
+[adguardhome]: https://github.com/AdguardTeam/AdGuardHome
+[dnsproxy]: https://github.com/AdguardTeam/dnsproxy
 
 The pinned versions are updated automatically — see
 [How versions are kept up to date](#how-versions-are-kept-up-to-date).
 
-[`upstream` library]: https://github.com/AdguardTeam/DnsLibs
-
 ## Usage
 
-Install the tap and formulas:
+Install the tap:
 
 ```sh
 brew tap AdguardTeam/tap
-brew install adyg adguard-cli adguardvpn-cli
 ```
 
-Or install a single formula:
+Then install the tools you need, one command per tool:
+
+```sh
+brew install adyg
+brew install adguard-cli
+brew install adguardvpn-cli
+brew install adguarddns-cli
+brew install adguardhome
+brew install dnsproxy
+```
+
+Or install a single formula directly by its fully-qualified name (this also
+adds the tap for you):
 
 ```sh
 brew install AdguardTeam/tap/adyg
@@ -96,7 +118,10 @@ the upstream repositories have published newer releases:
 
 ## Supported platforms
 
-- macOS (universal binary: both Apple Silicon and Intel are supported)
+- macOS — both Apple Silicon and Intel are supported. `adyg`, `adguard-cli` and
+  `adguardvpn-cli` ship a single universal binary; `adguarddns-cli`,
+  `adguardhome` and `dnsproxy` ship per-architecture binaries, which the
+  formulas select with `Hardware::CPU.arm?`.
 - Linux `x86_64` and `aarch64`
 
 ## Development

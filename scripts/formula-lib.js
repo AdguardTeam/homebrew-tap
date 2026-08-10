@@ -17,9 +17,14 @@ export const MANAGED_END = "# --- END MANAGED ---";
 
 /**
  * One entry per formula. `tagSuffix` is the part appended to the semver in the
- * release tag ("" for adyg, "-release" for the *-cli tools). `platforms` maps
- * a platform key to the release-asset filename patterns used to find that
- * platform's binary (in priority order).
+ * release tag ("" when the tag is just `v<semver>`, "-release" for the *-cli
+ * tools). `platforms` maps a platform key to the release-asset filename
+ * patterns used to find that platform's binary (in priority order).
+ *
+ * Most projects publish a single macOS binary (key "macos"); projects that
+ * only ship per-architecture macOS binaries declare "macosArm64" and
+ * "macosAmd64" instead (renderManaged emits the corresponding `if OS.mac?`
+ * block). Linux is always declared as "linuxAarch64" + "linuxX86_64".
  */
 export const formulas = [
   {
@@ -50,6 +55,39 @@ export const formulas = [
       { key: "macos", patterns: [/-macos\.tar\.gz$/] },
       { key: "linuxAarch64", patterns: [/-linux-aarch64\.tar\.gz$/] },
       { key: "linuxX86_64", patterns: [/-linux-x86_64\.tar\.gz$/] },
+    ],
+  },
+  {
+    file: "Formula/adguarddns-cli.rb",
+    repo: "AdguardTeam/AdGuardDNSCLI",
+    tagSuffix: "",
+    platforms: [
+      { key: "macosArm64", patterns: [/AdGuardDNSCLI_darwin_arm64\.zip$/] },
+      { key: "macosAmd64", patterns: [/AdGuardDNSCLI_darwin_amd64\.zip$/] },
+      { key: "linuxAarch64", patterns: [/AdGuardDNSCLI_linux_arm64\.tar\.gz$/] },
+      { key: "linuxX86_64", patterns: [/AdGuardDNSCLI_linux_amd64\.tar\.gz$/] },
+    ],
+  },
+  {
+    file: "Formula/adguardhome.rb",
+    repo: "AdguardTeam/AdGuardHome",
+    tagSuffix: "",
+    platforms: [
+      { key: "macosArm64", patterns: [/AdGuardHome_darwin_arm64\.zip$/] },
+      { key: "macosAmd64", patterns: [/AdGuardHome_darwin_amd64\.zip$/] },
+      { key: "linuxAarch64", patterns: [/AdGuardHome_linux_arm64\.tar\.gz$/] },
+      { key: "linuxX86_64", patterns: [/AdGuardHome_linux_amd64\.tar\.gz$/] },
+    ],
+  },
+  {
+    file: "Formula/dnsproxy.rb",
+    repo: "AdguardTeam/dnsproxy",
+    tagSuffix: "",
+    platforms: [
+      { key: "macosArm64", patterns: [/dnsproxy-darwin-arm64-.*\.tar\.gz$/] },
+      { key: "macosAmd64", patterns: [/dnsproxy-darwin-amd64-.*\.tar\.gz$/] },
+      { key: "linuxAarch64", patterns: [/dnsproxy-linux-arm64-.*\.tar\.gz$/] },
+      { key: "linuxX86_64", patterns: [/dnsproxy-linux-amd64-.*\.tar\.gz$/] },
     ],
   },
 ];
@@ -100,29 +138,54 @@ const indent = (line) => (line === "" ? "" : `  ${line}`);
 /**
  * The full Ruby snippet reserved for the managed markers, indented to sit
  * inside the formula class body. Has no trailing newline.
+ *
+ * When the formula declares per-architecture macOS assets (macosArm64 /
+ * macosAmd64) an `if OS.mac?` block is rendered instead of a single macOS
+ * `url` + the `on_linux do` wrapper.
  */
 export function renderManaged(def, release) {
   const version = versionFromTag(release.tag_name, def.tagSuffix);
   const assets = Object.fromEntries(
     def.platforms.map(({ key, patterns }) => [key, requireAsset(def, release, key, patterns)]),
   );
-  const { macos: m, linuxAarch64: a, linuxX86_64: x } = assets;
-  const body = [
-    `version "${version}"`,
-    "",
-    `url "${m.url}"`,
-    `sha256 "${m.sha256}"`,
-    "",
-    "on_linux do",
-    "  if Hardware::CPU.arm?",
-    `    url "${a.url}"`,
-    `    sha256 "${a.sha256}"`,
-    "  else",
-    `    url "${x.url}"`,
-    `    sha256 "${x.sha256}"`,
-    "  end",
-    "end",
-  ];
+  const { linuxAarch64: a, linuxX86_64: x } = assets;
+  const perArchMacos = Boolean(assets.macosArm64 && assets.macosAmd64);
+  const body = perArchMacos
+    ? [
+        `version "${version}"`,
+        "",
+        "if OS.mac?",
+        "  if Hardware::CPU.arm?",
+        `    url "${assets.macosArm64.url}"`,
+        `    sha256 "${assets.macosArm64.sha256}"`,
+        "  else",
+        `    url "${assets.macosAmd64.url}"`,
+        `    sha256 "${assets.macosAmd64.sha256}"`,
+        "  end",
+        "elsif Hardware::CPU.arm?",
+        `  url "${a.url}"`,
+        `  sha256 "${a.sha256}"`,
+        "else",
+        `  url "${x.url}"`,
+        `  sha256 "${x.sha256}"`,
+        "end",
+      ]
+    : [
+        `version "${version}"`,
+        "",
+        `url "${assets.macos.url}"`,
+        `sha256 "${assets.macos.sha256}"`,
+        "",
+        "on_linux do",
+        "  if Hardware::CPU.arm?",
+        `    url "${a.url}"`,
+        `    sha256 "${a.sha256}"`,
+        "  else",
+        `    url "${x.url}"`,
+        `    sha256 "${x.sha256}"`,
+        "  end",
+        "end",
+      ];
   return [`  ${MANAGED_BEGIN}`, ...body.map(indent), `  ${MANAGED_END}`].join("\n");
 }
 

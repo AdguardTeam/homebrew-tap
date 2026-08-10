@@ -52,9 +52,15 @@ jobs:
           brew install "${TAP}/adyg"
           brew install "${TAP}/adguard-cli"
           brew install "${TAP}/adguardvpn-cli"
+          brew install "${TAP}/adguarddns-cli"
+          brew install "${TAP}/adguardhome"
+          brew install "${TAP}/dnsproxy"
 
       - name: Test formulas
         run: |
           brew test "${TAP}/adyg"
           brew test "${TAP}/adguard-cli"
           brew test "${TAP}/adguardvpn-cli"
+          brew test "${TAP}/adguarddns-cli"
+          brew test "${TAP}/adguardhome"
+          brew test "${TAP}/dnsproxy"

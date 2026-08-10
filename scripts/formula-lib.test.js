@@ -19,6 +19,9 @@ import {
 const repoRoot = fileURLToPath(new URL("../", import.meta.url));
 const adyg = formulas.find((f) => f.file === "Formula/adyg.rb");
 const cli = formulas.find((f) => f.file === "Formula/adguard-cli.rb");
+const dnsCli = formulas.find((f) => f.file === "Formula/adguarddns-cli.rb");
+const home = formulas.find((f) => f.file === "Formula/adguardhome.rb");
+const proxy = formulas.find((f) => f.file === "Formula/dnsproxy.rb");
 
 /** Realistic release payload for AdguardTeam/DnsLibs (tag has no suffix). */
 const dnsLibsRelease = {
@@ -38,6 +41,44 @@ const cliRelease = {
     { name: "adguard-cli-1.4.13-linux-x86_64.tar.gz", browser_download_url: "https://github.com/AdguardTeam/AdGuardCLI/releases/download/v1.4.13-release/adguard-cli-1.4.13-linux-x86_64.tar.gz", digest: "sha256:0575c9a2397fc1537d9c8213811f0d79867a7953f2481f3e9677bd3f0a2cf88c" },
     { name: "adguard-cli-1.4.13-macos.tar.gz", browser_download_url: "https://github.com/AdguardTeam/AdGuardCLI/releases/download/v1.4.13-release/adguard-cli-1.4.13-macos.tar.gz", digest: "sha256:7f917aa5744695ce7c9af870df72061b33b17e07c233f1fa6a381c9fc1675065" },
     { name: "install.sh", browser_download_url: "https://github.com/AdguardTeam/AdGuardCLI/releases/download/v1.4.13-release/install.sh", digest: "sha256:da3040b0fd18c1e3ff1030e28a437c2c3b143c5380c211d8e591b960fa064763" },
+  ],
+};
+
+/**
+ * Realistic release payload for AdguardTeam/AdGuardDNSCLI, AdGuardHome and
+ * dnsproxy: these projects only ship per-architecture macOS binaries, so the
+ * platforms use macosArm64 / macosAmd64 instead of a single macos asset.
+ */
+const dnsCliRelease = {
+  tag_name: "v0.2.0",
+  assets: [
+    { name: "AdGuardDNSCLI_darwin_amd64.zip", browser_download_url: "https://github.com/AdguardTeam/AdGuardDNSCLI/releases/download/v0.2.0/AdGuardDNSCLI_darwin_amd64.zip", digest: "sha256:bd94bc8fedc50359ff693ecf9f022c242a9fedc464064c49393986dad2f62773" },
+    { name: "AdGuardDNSCLI_darwin_arm64.zip", browser_download_url: "https://github.com/AdguardTeam/AdGuardDNSCLI/releases/download/v0.2.0/AdGuardDNSCLI_darwin_arm64.zip", digest: "sha256:ac2708cf7f07243bd61d59717a126718e653a2398e8f86310fb652dea7626bfa" },
+    { name: "AdGuardDNSCLI_linux_386.tar.gz", browser_download_url: "https://github.com/AdguardTeam/AdGuardDNSCLI/releases/download/v0.2.0/AdGuardDNSCLI_linux_386.tar.gz", digest: "sha256:2e7cfa0729ce0aa93eb8875bcf634364304a8ddb0eb34d7420b121fc7e52b058" },
+    { name: "AdGuardDNSCLI_linux_amd64.tar.gz", browser_download_url: "https://github.com/AdguardTeam/AdGuardDNSCLI/releases/download/v0.2.0/AdGuardDNSCLI_linux_amd64.tar.gz", digest: "sha256:be6f73b2fcc989514bf70d06809ef478ddb891428854165da91152925cfca06d" },
+    { name: "AdGuardDNSCLI_linux_arm64.tar.gz", browser_download_url: "https://github.com/AdguardTeam/AdGuardDNSCLI/releases/download/v0.2.0/AdGuardDNSCLI_linux_arm64.tar.gz", digest: "sha256:458413f930685224af2b98bb6edae4ce2741735688ec74a5027c7370292f91d9" },
+  ],
+};
+
+const adGuardHomeRelease = {
+  tag_name: "v0.107.78",
+  assets: [
+    { name: "AdGuardHome_darwin_amd64.zip", browser_download_url: "https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.107.78/AdGuardHome_darwin_amd64.zip", digest: "sha256:7730683fd1870767d51b0938052899f53b1bf6a80c22619e156d2bd99779635b2" },
+    { name: "AdGuardHome_darwin_arm64.zip", browser_download_url: "https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.107.78/AdGuardHome_darwin_arm64.zip", digest: "sha256:9ccbf51e55d7a1ea13ee49ec8e58bb1ab88aa2ca9361eed11660c565e8d8a202" },
+    { name: "AdGuardHome_linux_amd64.tar.gz", browser_download_url: "https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.107.78/AdGuardHome_linux_amd64.tar.gz", digest: "sha256:2070f644644be8299232f4a7bff857036fb1423563c1bf8c787e07aaf4f88278" },
+    { name: "AdGuardHome_linux_arm64.tar.gz", browser_download_url: "https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.107.78/AdGuardHome_linux_arm64.tar.gz", digest: "sha256:71ef6d495d6d3fae45e6a80a172d44ae7f5aa528794cf927bb52fd5bff034eae" },
+  ],
+};
+
+const dnsProxyRelease = {
+  tag_name: "v0.83.2",
+  assets: [
+    { name: "dnsproxy-darwin-amd64-v0.83.2.tar.gz", browser_download_url: "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.83.2/dnsproxy-darwin-amd64-v0.83.2.tar.gz", digest: "sha256:e8f7ad5261690e89fc665cb24881da13f72183a97d34a9cd5e22e8d3357fd5bc" },
+    { name: "dnsproxy-darwin-arm64-v0.83.2.tar.gz", browser_download_url: "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.83.2/dnsproxy-darwin-arm64-v0.83.2.tar.gz", digest: "sha256:509f56266af3c06104d57e75cff2f741de80ba3dd916a75c3c07c5d8b124f030" },
+    { name: "dnsproxy-linux-amd64-v0.83.2.tar.gz", browser_download_url: "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.83.2/dnsproxy-linux-amd64-v0.83.2.tar.gz", digest: "sha256:9b02ed517a792f2fd492601c00c96454c4ee1b17c4c8792de58770aade327ddf" },
+    { name: "dnsproxy-linux-arm64-v0.83.2.tar.gz", browser_download_url: "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.83.2/dnsproxy-linux-arm64-v0.83.2.tar.gz", digest: "sha256:83fd900d80be1309a64d1bbbd98a034594501870faa8bd2f60266e0ad7296f22" },
+    // arm5/arm6/arm7 etc must never be picked for the arm64 platforms.
+    { name: "dnsproxy-linux-arm7-v0.83.2.tar.gz", browser_download_url: "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.83.2/dnsproxy-linux-arm7-v0.83.2.tar.gz", digest: "sha256:7a08380f73cc40aa22e0948de2393afe84b43b6e833084d64f2d9b476a6c1dc1" },
   ],
 };
 
@@ -106,6 +147,58 @@ test("renderManaged uses the -release tag in adguard-cli URLs", () => {
 test("renderManaged throws when a platform asset is missing", () => {
   const release = { tag_name: "v2.10.1", assets: [] };
   assert.throws(() => renderManaged(adyg, release), /No "macos" asset/);
+});
+
+test("renderManaged renders a per-arch macOS block for adguarddns-cli", () => {
+  const expected = [
+    "  # --- BEGIN MANAGED ---",
+    '  version "0.2.0"',
+    "",
+    "  if OS.mac?",
+    "    if Hardware::CPU.arm?",
+    '      url "https://github.com/AdguardTeam/AdGuardDNSCLI/releases/download/v0.2.0/AdGuardDNSCLI_darwin_arm64.zip"',
+    '      sha256 "ac2708cf7f07243bd61d59717a126718e653a2398e8f86310fb652dea7626bfa"',
+    "    else",
+    '      url "https://github.com/AdguardTeam/AdGuardDNSCLI/releases/download/v0.2.0/AdGuardDNSCLI_darwin_amd64.zip"',
+    '      sha256 "bd94bc8fedc50359ff693ecf9f022c242a9fedc464064c49393986dad2f62773"',
+    "    end",
+    "  elsif Hardware::CPU.arm?",
+    '    url "https://github.com/AdguardTeam/AdGuardDNSCLI/releases/download/v0.2.0/AdGuardDNSCLI_linux_arm64.tar.gz"',
+    '    sha256 "458413f930685224af2b98bb6edae4ce2741735688ec74a5027c7370292f91d9"',
+    "  else",
+    '    url "https://github.com/AdguardTeam/AdGuardDNSCLI/releases/download/v0.2.0/AdGuardDNSCLI_linux_amd64.tar.gz"',
+    '    sha256 "be6f73b2fcc989514bf70d06809ef478ddb891428854165da91152925cfca06d"',
+    "  end",
+    "  # --- END MANAGED ---",
+  ].join("\n");
+  assert.equal(renderManaged(dnsCli, dnsCliRelease), expected);
+});
+
+test("renderManaged renders AdGuardHome per-arch macOS block", () => {
+  const block = renderManaged(home, adGuardHomeRelease);
+  assert.ok(block.includes('version "0.107.78"'));
+  assert.ok(block.includes("if OS.mac?"));
+  assert.ok(block.includes("elsif Hardware::CPU.arm?"));
+  assert.ok(block.includes("AdGuardHome_darwin_arm64.zip"));
+  assert.ok(block.includes("AdGuardHome_darwin_amd64.zip"));
+  assert.ok(block.includes("AdGuardHome_linux_arm64.tar.gz"));
+  assert.ok(block.includes("AdGuardHome_linux_amd64.tar.gz"));
+  assert.ok(block.includes("9ccbf51e55d7a1ea13ee49ec8e58bb1ab88aa2ca9361eed11660c565e8d8a202"));
+  assert.ok(!block.includes("on_linux do"));
+});
+
+test("renderManaged renders dnsproxy per-arch block and ignores other arch assets", () => {
+  const block = renderManaged(proxy, dnsProxyRelease);
+  assert.ok(block.includes('version "0.83.2"'));
+  assert.ok(block.includes("if OS.mac?"));
+  assert.ok(block.includes("elsif Hardware::CPU.arm?"));
+  assert.ok(block.includes("dnsproxy-darwin-arm64-v0.83.2.tar.gz"));
+  assert.ok(block.includes("dnsproxy-darwin-amd64-v0.83.2.tar.gz"));
+  assert.ok(block.includes("dnsproxy-linux-arm64-v0.83.2.tar.gz"));
+  assert.ok(block.includes("dnsproxy-linux-amd64-v0.83.2.tar.gz"));
+  assert.ok(block.includes("509f56266af3c06104d57e75cff2f741de80ba3dd916a75c3c07c5d8b124f030"));
+  // The linux-arm7 asset must never be confused with the arm64 one.
+  assert.ok(!block.includes("dnsproxy-linux-arm7"));
 });
 
 test("updateFormula rewrites only the managed block", () => {
@@ -189,7 +282,13 @@ test("readPinnedVersion extracts the pinned version", () => {
 test("every formula definition lists the expected platforms", () => {
   for (const def of formulas) {
     const keys = def.platforms.map((p) => p.key);
-    assert.deepEqual(keys, ["macos", "linuxAarch64", "linuxX86_64"], def.file);
+    // Either a single macOS binary or per-architecture macOS binaries, plus
+    // the two Linux architectures.
+    const perArchMacos = def.platforms.some((p) => p.key === "macosArm64");
+    const expected = perArchMacos
+      ? ["macosArm64", "macosAmd64", "linuxAarch64", "linuxX86_64"]
+      : ["macos", "linuxAarch64", "linuxX86_64"];
+    assert.deepEqual(keys, expected, def.file);
     for (const { patterns } of def.platforms) {
       assert.ok(patterns.length > 0, `${def.file}: empty patterns for a platform`);
     }
