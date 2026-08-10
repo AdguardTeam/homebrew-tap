@@ -1,0 +1,60 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  # Resolve the concrete ephemeral macOS runner image label. Runs on the
+  # persistent self-hosted group and reads the label from the CI state KV
+  # store — same wiring as AdGuardSoftwareLimited/dns-libs.
+  resolve-images:
+    if: github.repository == 'AdGuardSoftwareLimited/homebrew-tap'
+    uses: AdGuardSoftwareLimited/native-libs-common/.github/workflows/resolve-images.yml@master
+
+  test:
+    # Request a proper ephemeral macOS machine via the `ephemeral` tags plus
+    # the resolved image label (not a persistent runner).
+    if: github.repository == 'AdGuardSoftwareLimited/homebrew-tap'
+    needs: resolve-images
+    runs-on:
+      - ephemeral
+      - ephemeral-mac
+      - ${{ needs.resolve-images.outputs.macos }}
+
+    env:
+      HOMEBREW_NO_ENV_HINTS: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          # Full history so the local `brew tap` clone below is not shallow.
+          fetch-depth: 0
+
+      # Bring our own Homebrew setup (no Homebrew/actions/setup-homebrew).
+      - name: Set up Homebrew
+        run: ./.github/scripts/setup-homebrew.sh
+
+      # Homebrew requires a formula to live in a tap, so register the
+      # checked-out repo as one. Deriving the tap name from github.repository
+      # avoids hard-coding the (enterprise) owner.
+      - name: Register the checkout as a tap
+        run: |
+          owner="${GITHUB_REPOSITORY%/*}"
+          tap="${GITHUB_REPOSITORY#*/}"
+          tap="${tap#homebrew-}"
+          brew tap "${owner}/${tap}" "$GITHUB_WORKSPACE"
+          echo "TAP=${owner}/${tap}" >> "$GITHUB_ENV"
+
+      - name: Install formulas
+        run: |
+          brew install "${TAP}/adyg"
+          brew install "${TAP}/adguard-cli"
+          brew install "${TAP}/adguardvpn-cli"
+
+      - name: Test formulas
+        run: |
+          brew test "${TAP}/adyg"
+          brew test "${TAP}/adguard-cli"
+          brew test "${TAP}/adguardvpn-cli"

@@ -1,0 +1,25 @@
+name: Mirror to public repository
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  mirror:
+    name: Mirror to public repository
+    # The enterprise repo is the source of truth; only mirror from here.
+    if: github.repository == 'AdGuardSoftwareLimited/homebrew-tap'
+    uses: AdGuardSoftwareLimited/actions/.github/workflows/mirror.yml@master
+    with:
+      team: corelibs
+      target_repo: 'git@github.com:AdguardTeam/homebrew-tap.git'
+    secrets: inherit
+    permissions:
+      contents: read
+      actions: write
+      id-token: write
