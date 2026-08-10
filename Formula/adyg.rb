@@ -1,73 +1,27 @@
 class Adyg < Formula
-  require "json"
-  require "net/http"
-  require "uri"
-
   desc "Small dig-like DNS query CLI tool built on the upstream library"
   homepage "https://github.com/AdguardTeam/DnsLibs"
   license "Apache-2.0"
 
-  # The GitHub repository whose `/releases/latest` endpoint is used to pick the
-  # newest release, its asset URL, and its sha256 at install time, so the
-  # formula always installs the latest release.
-  REPO = "AdguardTeam/DnsLibs".freeze
+  # Pinned to the latest release by scripts/update-versions.js, which runs on a
+  # schedule (see .github/workflows/update-versions.yml). Do not edit the
+  # managed block by hand — run `npm run update-versions` instead.
+  # --- BEGIN MANAGED ---
+  version "2.10.0"
 
-  # Queries the GitHub releases API for the latest (non-prerelease) release.
-  #
-  # Validates the HTTP status and the payload shape so that failures (e.g. the
-  # unauthenticated API rate limit being exceeded on CI runners, which returns
-  # an error JSON without "tag_name") produce a useful error instead of a bare
-  # KeyError.
-  def self.latest_release
-    uri = URI("https://api.github.com/repos/#{REPO}/releases/latest")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.open_timeout = 10
-    http.read_timeout = 10
-    request = Net::HTTP::Get.new(uri)
-    request["Accept"] = "application/vnd.github+json"
-    request["User-Agent"] = "homebrew-tap"
-    response = http.request(request)
-    unless response.is_a?(Net::HTTPSuccess)
-      odie "GitHub API for #{REPO} returned HTTP #{response.code}: #{response.body.to_s[0, 300]}"
-    end
-
-    release = JSON.parse(response.body)
-    %w[tag_name assets].each do |key|
-      odie "GitHub release payload for #{REPO} is missing '#{key}'" if release[key].nil?
-    end
-    release
-  rescue => e
-    odie "Unable to fetch the latest release of #{REPO}: #{e}"
-  end
-
-  release = latest_release
-  TAG_NAME = release.fetch("tag_name").freeze
-  VERSION = TAG_NAME.delete_prefix("v").delete_suffix("-release").freeze
-  ASSETS = release.fetch("assets").freeze
-
-  # Returns the release asset whose filename matches the given pattern.
-  def self.asset(matching)
-    ASSETS.find { |a| a["name"].to_s.match?(matching) }
-  end
-
-  macos_asset = asset(/-macos-universal\.tar\.gz\z/) || asset(/-macos\.tar\.gz\z/)
-  odie "No macOS release asset found for #{TAG_NAME}" if macos_asset.nil?
-  odie "No sha256 digest for the macOS asset of #{TAG_NAME}" if macos_asset["digest"].to_s.empty?
-
-  url macos_asset.fetch("browser_download_url")
-  sha256 macos_asset.fetch("digest").delete_prefix("sha256:")
-  version VERSION
+  url "https://github.com/AdguardTeam/DnsLibs/releases/download/v2.10.0/adyg-v2.10.0-macos-universal.tar.gz"
+  sha256 "257d03e8083b564b38fc383931d09f9956da309873811f6f3a2e811968bee13b"
 
   on_linux do
-    arch = Hardware::CPU.arm? ? "aarch64" : "x86_64"
-    linux_asset = ASSETS.find { |a| a["name"].to_s.match?(/-linux-#{arch}\.tar\.gz\z/) }
-    odie "No #{arch} Linux release asset found for #{TAG_NAME}" if linux_asset.nil?
-    odie "No sha256 digest for the #{arch} Linux asset of #{TAG_NAME}" if linux_asset["digest"].to_s.empty?
-
-    url linux_asset.fetch("browser_download_url")
-    sha256 linux_asset.fetch("digest").delete_prefix("sha256:")
+    if Hardware::CPU.arm?
+      url "https://github.com/AdguardTeam/DnsLibs/releases/download/v2.10.0/adyg-v2.10.0-linux-aarch64.tar.gz"
+      sha256 "69efd31ec44d9d5ea4ce755f69adb2329213a344ad933a6a222f9b7df5af7d4e"
+    else
+      url "https://github.com/AdguardTeam/DnsLibs/releases/download/v2.10.0/adyg-v2.10.0-linux-x86_64.tar.gz"
+      sha256 "0866c87ba166eaa6aba43da241ca6808febbade641ef9900646d42804f47b3e3"
+    end
   end
+  # --- END MANAGED ---
 
   def install
     bin.install "adyg"

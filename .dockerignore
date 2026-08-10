@@ -1,0 +1,6 @@
+# Docker build context: only scripts, package.json and Formula are needed
+
+.git
+.github
+.gitignore
+.DS_Store

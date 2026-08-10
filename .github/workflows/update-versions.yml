@@ -1,0 +1,57 @@
+# Periodically checks the upstream GitHub releases for the tap's formulas and
+# bumps the pinned version (URL + sha256) in Formula/ when a newer release is
+# available. The multi-stage Dockerfile (test + update stages) runs
+# scripts/update-versions.js, which only rewrites the managed block of each
+# formula; the updated Formula/ is written back with `docker build --output
+# type=local`, then committed and pushed to master with the org's Octopass
+# protected-push action (same approach as
+# AdGuardSoftwareLimited/github-knowledge-base).
+name: Update formula versions
+
+on:
+  schedule:
+    # Check for newer upstream releases daily at 06:00 UTC.
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  update-versions:
+    # The enterprise repo is the source of truth; only bump versions here.
+    if: github.repository == 'AdGuardSoftwareLimited/homebrew-tap'
+    # Self-hosted runner with network access to the Octopass endpoint, which
+    # the protected-push action needs to mint the commit token.
+    runs-on: team-corelibs
+
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      # Build the multi-stage image: the 'test' stage runs the unit tests and
+      # the 'update' stage runs scripts/update-versions.js inside the
+      # container. The 'export' (scratch) stage then writes just the updated
+      # Formula/ back to the checkout via Docker's local output, so the runner
+      # needs no Node.js at all. CACHEBUST forces the upstream check to re-run
+      # on every build instead of being served from the Docker layer cache.
+      - name: Bump formula versions
+        run: |
+          docker build \
+            --target export \
+            --build-arg CACHEBUST="$(date -u +%s)" \
+            --output type=local,dest=/tmp/tap-out .
+          cp -R /tmp/tap-out/Formula/. Formula/
+          rm -rf /tmp/tap-out
+
+      # Commits Formula/ only when the script changed something (no-op
+      # otherwise), pushing straight to master with a short-lived Octopass
+      # token. The push triggers the usual test.yml and mirror.yml flows.
+      - name: Commit and push updated formulas
+        id: protected-push
+        uses: AdGuardSoftwareLimited/actions/actions/protected-push@master
+        with:
+          branch: master
+          commit-message: "chore: bump homebrew formula versions"
+          files: "Formula"

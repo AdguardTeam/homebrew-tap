@@ -1,76 +1,30 @@
 class AdguardCli < Formula
-  require "json"
-  require "net/http"
-  require "uri"
-
   desc "Command-line interface for AdGuard (ad-blocking) on Linux and macOS"
   homepage "https://github.com/AdguardTeam/AdGuardCLI"
   license "proprietary"
 
-  # The GitHub repository whose `/releases/latest` endpoint is used to pick the
-  # newest release, its asset URL, and its sha256 at install time, so the
-  # formula always installs the latest release.
+  # Pinned to the latest release by scripts/update-versions.js, which runs on a
+  # schedule (see .github/workflows/update-versions.yml). Do not edit the
+  # managed block by hand — run `npm run update-versions` instead.
   #
   # NOTE: AdGuard CLI is not an open-source project; binaries are distributed
   # through GitHub releases and the GitHub repo is used as an issue tracker.
-  REPO = "AdguardTeam/AdGuardCLI".freeze
+  # --- BEGIN MANAGED ---
+  version "1.3.35"
 
-  # Queries the GitHub releases API for the latest (non-prerelease) release.
-  #
-  # Validates the HTTP status and the payload shape so that failures (e.g. the
-  # unauthenticated API rate limit being exceeded on CI runners, which returns
-  # an error JSON without "tag_name") produce a useful error instead of a bare
-  # KeyError.
-  def self.latest_release
-    uri = URI("https://api.github.com/repos/#{REPO}/releases/latest")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.open_timeout = 10
-    http.read_timeout = 10
-    request = Net::HTTP::Get.new(uri)
-    request["Accept"] = "application/vnd.github+json"
-    request["User-Agent"] = "homebrew-tap"
-    response = http.request(request)
-    unless response.is_a?(Net::HTTPSuccess)
-      odie "GitHub API for #{REPO} returned HTTP #{response.code}: #{response.body.to_s[0, 300]}"
-    end
-
-    release = JSON.parse(response.body)
-    %w[tag_name assets].each do |key|
-      odie "GitHub release payload for #{REPO} is missing '#{key}'" if release[key].nil?
-    end
-    release
-  rescue => e
-    odie "Unable to fetch the latest release of #{REPO}: #{e}"
-  end
-
-  release = latest_release
-  TAG_NAME = release.fetch("tag_name").freeze
-  VERSION = TAG_NAME.delete_prefix("v").delete_suffix("-release").freeze
-  ASSETS = release.fetch("assets").freeze
-
-  # Returns the release asset whose filename matches the given pattern.
-  def self.asset(matching)
-    ASSETS.find { |a| a["name"].to_s.match?(matching) }
-  end
-
-  macos_asset = asset(/-macos\.tar\.gz\z/)
-  odie "No macOS release asset found for #{TAG_NAME}" if macos_asset.nil?
-  odie "No sha256 digest for the macOS asset of #{TAG_NAME}" if macos_asset["digest"].to_s.empty?
-
-  url macos_asset.fetch("browser_download_url")
-  sha256 macos_asset.fetch("digest").delete_prefix("sha256:")
-  version VERSION
+  url "https://github.com/AdguardTeam/AdGuardCLI/releases/download/v1.3.35-release/adguard-cli-1.3.35-macos.tar.gz"
+  sha256 "b332665fe29702b995479ce7879bb1eee76e323d5090a850169373ab88e61ea3"
 
   on_linux do
-    arch = Hardware::CPU.arm? ? "aarch64" : "x86_64"
-    linux_asset = ASSETS.find { |a| a["name"].to_s.match?(/-linux-#{arch}\.tar\.gz\z/) }
-    odie "No #{arch} Linux release asset found for #{TAG_NAME}" if linux_asset.nil?
-    odie "No sha256 digest for the #{arch} Linux asset of #{TAG_NAME}" if linux_asset["digest"].to_s.empty?
-
-    url linux_asset.fetch("browser_download_url")
-    sha256 linux_asset.fetch("digest").delete_prefix("sha256:")
+    if Hardware::CPU.arm?
+      url "https://github.com/AdguardTeam/AdGuardCLI/releases/download/v1.3.35-release/adguard-cli-1.3.35-linux-aarch64.tar.gz"
+      sha256 "92c744cc159a3e73e2d3d3615aefcf5c64cf3ea013ae3425c690ec2abbb69793"
+    else
+      url "https://github.com/AdguardTeam/AdGuardCLI/releases/download/v1.3.35-release/adguard-cli-1.3.35-linux-x86_64.tar.gz"
+      sha256 "ac35f24c7c3ffb190c3729f9b19c7868e5bfc8a31522fc7d2d954dfaea963111"
+    end
   end
+  # --- END MANAGED ---
 
   def install
     bin.install "adguard-cli"
