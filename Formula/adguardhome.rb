@@ -7,22 +7,22 @@ class Adguardhome < Formula
   # schedule (see .github/workflows/update-versions.yml). Do not edit the
   # managed block by hand — run `npm run update-versions` instead.
   # --- BEGIN MANAGED ---
-  version "0.107.78"
+  version "0.107.79"
 
   if OS.mac?
     if Hardware::CPU.arm?
-      url "https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.107.78/AdGuardHome_darwin_arm64.zip"
-      sha256 "9ccbf51e55d7a1ea13ee49ec8e58bb1ab88aa2ca9361eed11660c565e8d8a202"
+      url "https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.107.79/AdGuardHome_darwin_arm64.zip"
+      sha256 "916f50bcc16b452c63ab8289f523a3c637e84933460a0ae7525fec03e31de867"
     else
-      url "https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.107.78/AdGuardHome_darwin_amd64.zip"
-      sha256 "7730683fd1870767d51b0938052899f53b1bf6a80c22619e156d2bd9779635b2"
+      url "https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.107.79/AdGuardHome_darwin_amd64.zip"
+      sha256 "a28e30605c306c9002a496e705cffbe8828ef300ba5e85121e9308e623335ffa"
     end
   elsif Hardware::CPU.arm?
-    url "https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.107.78/AdGuardHome_linux_arm64.tar.gz"
-    sha256 "71ef6d495d6d3fae45e6a80a172d44ae7f5aa528794cf927bb52fd5bff034eae"
+    url "https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.107.79/AdGuardHome_linux_arm64.tar.gz"
+    sha256 "3f7893c18e8aaadc456d0452839190561c306ca95175a2254958be80a769c1ae"
   else
-    url "https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.107.78/AdGuardHome_linux_amd64.tar.gz"
-    sha256 "2070f644644be8299232f4a7bff857036fb1423563c1bf8c787e07aaf4f88278"
+    url "https://github.com/AdguardTeam/AdGuardHome/releases/download/v0.107.79/AdGuardHome_linux_amd64.tar.gz"
+    sha256 "c48f4a43000665484c5ec28177de11a004759b620dae8f77b2aabefc9ef3687f"
   end
   # --- END MANAGED ---
 
