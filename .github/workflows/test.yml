@@ -21,6 +21,7 @@ jobs:
       - ephemeral
       - ephemeral-mac
       - ${{ needs.resolve-images.outputs.macos }}
+      - ephemeral-job-key-${{ github.run_id }}-${{ github.job }}-${{ strategy.job-index || 0 }}
 
     env:
       HOMEBREW_NO_ENV_HINTS: 1
