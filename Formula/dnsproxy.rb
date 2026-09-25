@@ -7,22 +7,22 @@ class Dnsproxy < Formula
   # schedule (see .github/workflows/update-versions.yml). Do not edit the
   # managed block by hand — run `npm run update-versions` instead.
   # --- BEGIN MANAGED ---
-  version "0.84.2"
+  version "0.85.0"
 
   if OS.mac?
     if Hardware::CPU.arm?
-      url "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.84.2/dnsproxy-darwin-arm64-v0.84.2.tar.gz"
-      sha256 "f72490d1d76566a9101e719fce4174e5fe794695c9c0ad9334bd5ecf7664b3da"
+      url "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.85.0/dnsproxy-darwin-arm64-v0.85.0.tar.gz"
+      sha256 "64c2a6c2645745e24369f21c9e22661a18bfcfdcbdd8ff54af0d37328b3ea9e6"
     else
-      url "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.84.2/dnsproxy-darwin-amd64-v0.84.2.tar.gz"
-      sha256 "72824e9a402f70bb5ca9daa615e3c9c0669b1c9fe5b5d46637b4f5c64924f5aa"
+      url "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.85.0/dnsproxy-darwin-amd64-v0.85.0.tar.gz"
+      sha256 "48ea71b4f3d3f78d39f3e5bce43379bef41889e32fc45b8391598df9dd3b55c1"
     end
   elsif Hardware::CPU.arm?
-    url "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.84.2/dnsproxy-linux-arm64-v0.84.2.tar.gz"
-    sha256 "e9bcdb4fcc35c2ac85e837745416a599af6024a07637cc042c92a5a368277d5e"
+    url "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.85.0/dnsproxy-linux-arm64-v0.85.0.tar.gz"
+    sha256 "6243b9e6c48d2fce9eee0c1170566b8474768ec87602baccbc6dc44514a83568"
   else
-    url "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.84.2/dnsproxy-linux-amd64-v0.84.2.tar.gz"
-    sha256 "0b4ae9f09f9e4e701208291b79df26d08532bdbfdc8a928f22b9454ba5c4057a"
+    url "https://github.com/AdguardTeam/dnsproxy/releases/download/v0.85.0/dnsproxy-linux-amd64-v0.85.0.tar.gz"
+    sha256 "740af768b17fe8ecc2dbc8c82c7b5224e43278a181b4fe31b0cce5d8da656332"
   end
   # --- END MANAGED ---
 
