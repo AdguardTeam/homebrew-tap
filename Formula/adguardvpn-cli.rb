@@ -11,18 +11,18 @@ class AdguardvpnCli < Formula
   # distributed through GitHub releases and the GitHub repo is used as an issue
   # tracker.
   # --- BEGIN MANAGED ---
-  version "1.7.12"
+  version "1.8.1"
 
-  url "https://github.com/AdguardTeam/AdGuardVPNCLI/releases/download/v1.7.12-release/adguardvpn-cli-1.7.12-macos.tar.gz"
-  sha256 "32e89e923cf1888e3e17c4ec040d45376201ce1006945a3163384c6d73ada37b"
+  url "https://github.com/AdguardTeam/AdGuardVPNCLI/releases/download/v1.8.1-release/adguardvpn-cli-1.8.1-macos.tar.gz"
+  sha256 "fd87fdd3b875068593249ac62d2cac87d3f7188efbe0dea598c55620e4e70c10"
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/AdguardTeam/AdGuardVPNCLI/releases/download/v1.7.12-release/adguardvpn-cli-1.7.12-linux-aarch64.tar.gz"
-      sha256 "872fcd81ec41f952001c567abd2e61564773ccdcf5be246afd047f3d3eb4ee0b"
+      url "https://github.com/AdguardTeam/AdGuardVPNCLI/releases/download/v1.8.1-release/adguardvpn-cli-1.8.1-linux-aarch64.tar.gz"
+      sha256 "43c8850fef41efa8fd1389e4b875c9e85d59ff8e1cc17cb2a586084825c4bfbe"
     else
-      url "https://github.com/AdguardTeam/AdGuardVPNCLI/releases/download/v1.7.12-release/adguardvpn-cli-1.7.12-linux-x86_64.tar.gz"
-      sha256 "a706933c87ec88eec8578cce96d2b91c385e083cf738a806e69b3bcd877fb88c"
+      url "https://github.com/AdguardTeam/AdGuardVPNCLI/releases/download/v1.8.1-release/adguardvpn-cli-1.8.1-linux-x86_64.tar.gz"
+      sha256 "e48b67f0ff4c5a5b1099890d7ea4ef0d26e9119d379f019c751a45b3715bc62d"
     end
   end
   # --- END MANAGED ---
