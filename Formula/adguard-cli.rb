@@ -10,18 +10,18 @@ class AdguardCli < Formula
   # NOTE: AdGuard CLI is not an open-source project; binaries are distributed
   # through GitHub releases and the GitHub repo is used as an issue tracker.
   # --- BEGIN MANAGED ---
-  version "1.4.13"
+  version "1.5.0"
 
-  url "https://github.com/AdguardTeam/AdGuardCLI/releases/download/v1.4.13-release/adguard-cli-1.4.13-macos.tar.gz"
-  sha256 "7f917aa5744695ce7c9af870df72061b33b17e07c233f1fa6a381c9fc1675065"
+  url "https://github.com/AdguardTeam/AdGuardCLI/releases/download/v1.5.0/adguard-cli-1.5.0-macos.tar.gz"
+  sha256 "9b248a40978b78c0e442feb4034cff357337394a86d5cfb8802468fcb37b6c48"
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/AdguardTeam/AdGuardCLI/releases/download/v1.4.13-release/adguard-cli-1.4.13-linux-aarch64.tar.gz"
-      sha256 "607af03ed83563d8d4162a2a3e5c9ed0d05d6d5b73840ec41fb5c5c573d09a45"
+      url "https://github.com/AdguardTeam/AdGuardCLI/releases/download/v1.5.0/adguard-cli-1.5.0-linux-aarch64.tar.gz"
+      sha256 "bb92958a8b17a037058d2f9c4b5018a8a23c9f1ab18c89efb6557a5e729701d9"
     else
-      url "https://github.com/AdguardTeam/AdGuardCLI/releases/download/v1.4.13-release/adguard-cli-1.4.13-linux-x86_64.tar.gz"
-      sha256 "0575c9a2397fc1537d9c8213811f0d79867a7953f2481f3e9677bd3f0a2cf88c"
+      url "https://github.com/AdguardTeam/AdGuardCLI/releases/download/v1.5.0/adguard-cli-1.5.0-linux-x86_64.tar.gz"
+      sha256 "e515de4a4b36d31067416731abe1450e494edd3743df766d9e4673b9ed9f3e28"
     end
   end
   # --- END MANAGED ---
