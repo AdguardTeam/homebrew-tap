@@ -5,22 +5,14 @@ on:
   pull_request:
 
 jobs:
-  # Resolve the concrete ephemeral macOS runner image label. Runs on the
-  # persistent self-hosted group and reads the label from the CI state KV
-  # store — same wiring as AdGuardSoftwareLimited/dns-libs.
-  resolve-images:
-    if: github.repository == 'AdGuardSoftwareLimited/homebrew-tap'
-    uses: AdGuardSoftwareLimited/native-libs-common/.github/workflows/resolve-images.yml@master
-
   test:
     # Request a proper ephemeral macOS machine via the `ephemeral` tags plus
-    # the resolved image label (not a persistent runner).
+    # the edge-channel image label (not a persistent runner).
     if: github.repository == 'AdGuardSoftwareLimited/homebrew-tap'
-    needs: resolve-images
     runs-on:
       - ephemeral
       - ephemeral-mac
-      - ${{ needs.resolve-images.outputs.macos }}
+      - registry.int.agrd.dev/macos/tahoe-github-xcode27-26.11:@edge
       - ephemeral-job-key-${{ github.run_id }}-${{ github.job }}-${{ strategy.job-index || 0 }}
 
     env:
