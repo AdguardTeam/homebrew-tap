@@ -7,18 +7,18 @@ class Adyg < Formula
   # schedule (see .github/workflows/update-versions.yml). Do not edit the
   # managed block by hand — run `npm run update-versions` instead.
   # --- BEGIN MANAGED ---
-  version "2.10.2"
+  version "2.11.0"
 
-  url "https://github.com/AdguardTeam/DnsLibs/releases/download/v2.10.2/adyg-v2.10.2-macos-universal.tar.gz"
-  sha256 "5cbfb64af3342ad76d4d2e1504792be11e7033a57a5aa4ea686fcd61e3f65013"
+  url "https://github.com/AdguardTeam/DnsLibs/releases/download/v2.11.0/adyg-v2.11.0-macos-universal.tar.gz"
+  sha256 "dafee97e8dbd6f3ad3e93f66c286dbb009c3865e5acebddf593ed65227f730a3"
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/AdguardTeam/DnsLibs/releases/download/v2.10.2/adyg-v2.10.2-linux-aarch64.tar.gz"
-      sha256 "b25820972e9840bf6d30a9d7b48c70de048e590b498ceb81c916a4b0dfb5afb6"
+      url "https://github.com/AdguardTeam/DnsLibs/releases/download/v2.11.0/adyg-v2.11.0-linux-aarch64.tar.gz"
+      sha256 "5ee3b6fe5dc88a5b09f76613e94312b4bdfdb84c1e0da0a05c225bd135f9816d"
     else
-      url "https://github.com/AdguardTeam/DnsLibs/releases/download/v2.10.2/adyg-v2.10.2-linux-x86_64.tar.gz"
-      sha256 "e2c36ac1b453b9d754e6823cfe92fbcc247a76d003af95f56374fe3387b752c2"
+      url "https://github.com/AdguardTeam/DnsLibs/releases/download/v2.11.0/adyg-v2.11.0-linux-x86_64.tar.gz"
+      sha256 "e97e99ee9106178f7c61b8f5e274951770773c364024af958b75dfe50f49af3f"
     end
   end
   # --- END MANAGED ---
